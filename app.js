@@ -1,17 +1,24 @@
 const express = require("express");
-const app = express();
+const moongose = require("mongoose");
+const dotenv = require("dotenv").config();
 const cors = require("cors");
+const bodyParser = require("body-parser");
+
+const app = express();
 
 app.use(cors());
 
-const postRoutes = require("./routes/post");
+const noteRoutes = require("./routes/note");
 
 app.use(express.json());
 
-app.use(postRoutes);
+app.use(noteRoutes);
 
-const PORT = 7000;
+moongose
+  .connect(process.env.MONGODB_URL)
+  .then((res) => {
+    app.listen(4000);
+    console.log("Connected to mongodb!!!");
+  })
+  .catch((err) => console.log(err));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
