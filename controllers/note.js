@@ -65,7 +65,49 @@ exports.getNoteDetails = (req, res, next) => {
         message: "Something went wrong.",
       });
     });
-}
+};
+
+//GET/edit/:id
+exports.getOldNote = (req, res, next) => {
+  const { id } = req.params;
+  Note.findById(id)
+    .then((note) => {
+      return res.status(200).json(note);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(404).json({
+        message: "Something went wrong.",
+      });
+    });
+};
+
+//POST/edit
+exports.updateNote = (req, res, next) => {
+  const { id } = req.params;
+
+  Note.findById(id)
+    .then((note) => {
+      if (!note) {
+        //console.log("Note not found for ID:", id);
+        return res.status(404).json({ message: "Note not found." });
+      }
+
+      note.title = req.body.title;
+      note.content = req.body.content;
+      return note.save();
+    })
+    .then((updatedNote) => {
+      //console.log("Note updated successfully:", updatedNote);
+      res
+        .status(200)
+        .json({ message: "Note is updated successfully.", updatedNote });
+    })
+    .catch((err) => {
+      //console.error("Error updating note:", err);
+      res.status(500).json({ message: "Something went wrong." });
+    });
+};
 
 //DELETE/notes/:id
 exports.deleteNote = async (req, res, next) => {
@@ -87,7 +129,7 @@ exports.deleteNote = async (req, res, next) => {
 
     return res.status(500).json({
       message: "Internal server error. Check server logs for details.",
-      error: err.message, 
+      error: err.message,
     });
   }
 };
