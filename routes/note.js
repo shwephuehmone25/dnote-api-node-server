@@ -6,8 +6,12 @@ const router = express.Router();
 /**import controllers*/
 const noteController = require("../controllers/note");
 
+router.get("/", (req, res) => {
+  res.send("Welcome from DNOTE");
+});
+
 //GET/notes
-router.get(noteController.getAllNotes);
+router.get("/notes", noteController.getAllNotes);
 
 //POST/note
 router.post(
@@ -26,5 +30,11 @@ router.post(
   ],
   noteController.createNote
 );
+
+//GET/notes/:id
+router.get("/notes/:id", noteController.getNoteDetails);
+
+//DELETE/note/:id
+router.delete("/delete/note/:id", noteController.deleteNote);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const express = require("express");
-const moongose = require("mongoose");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -14,10 +14,10 @@ app.use(express.json());
 
 app.use(noteRoutes);
 
-moongose
+mongoose
   .connect(process.env.MONGODB_URL)
   .then((res) => {
-    app.listen(4000);
+    app.listen(7000);
     console.log("Connected to mongodb!!!");
   })
   .catch((err) => console.log(err));
