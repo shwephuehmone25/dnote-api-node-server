@@ -23,6 +23,8 @@ exports.getAllNotes = (req, res, next) => {
 //POST/note
 exports.createNote = (req, res, next) => {
   const { title, content } = req.body;
+  const image = req.file;
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -33,6 +35,7 @@ exports.createNote = (req, res, next) => {
   Note.create({
     title,
     content,
+    image: image ? image.path : "",
   })
     .then((_) => {
       res.status(201).json({
