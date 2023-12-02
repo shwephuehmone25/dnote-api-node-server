@@ -1,7 +1,9 @@
 const { validationResult } = require("express-validator");
+const fs = require("fs");
 
 /**models import*/
 const Note = require("../models/note");
+const { unlink } = require("../utils/unlink");
 
 //GET/notes
 exports.getAllNotes = (req, res, next) => {
@@ -88,6 +90,7 @@ exports.getOldNote = (req, res, next) => {
 //POST/edit
 exports.updateNote = (req, res, next) => {
   const { id } = req.params;
+  const image = req.file;
 
   Note.findById(id)
     .then((note) => {
@@ -98,6 +101,11 @@ exports.updateNote = (req, res, next) => {
 
       note.title = req.body.title;
       note.content = req.body.content;
+
+      if (image) {
+        unlink(note.image);
+        note.image = image.path;
+      }
       return note.save();
     })
     .then((updatedNote) => {
@@ -114,25 +122,35 @@ exports.updateNote = (req, res, next) => {
 
 //DELETE/notes/:id
 exports.deleteNote = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const deletedNote = await Note.findByIdAndDelete(id);
+  const { id } = req.params;
 
-    if (!deletedNote) {
-      return res.status(404).json({
-        message: "Note not found.",
-      });
+  try {
+    const note = await Note.findById(id);
+
+    if (!note) {
+      return res.status(404).json({ message: "Note not found." });
     }
 
+    const imagePath = note.image;
+
+    const unlinkFile = async () => {
+      if (fs.existsSync(imagePath)) {
+        await fs.promises.unlink(imagePath);
+      }
+    };
+
+    await unlinkFile();
+    await Note.findByIdAndDelete(id);
+
     return res.status(204).json({
-      message: "Note is deleted successfully.",
+      message: "Note is deleted.",
     });
   } catch (err) {
-    console.error("Error in delete Note:", err);
-
-    return res.status(500).json({
+    console.error(err);
+    res.status(500).json({
       message: "Internal server error. Check server logs for details.",
       error: err.message,
     });
   }
 };
+
