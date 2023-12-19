@@ -44,10 +44,12 @@ app.use(
 );
 
 const noteRoutes = require("./routes/note");
+const authRoutes = require("./routes/auth");
 
 app.use(express.json());
 
 app.use(noteRoutes);
+app.use(authRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URL)
