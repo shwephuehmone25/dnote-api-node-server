@@ -26,12 +26,11 @@ router.post(
       .withMessage("Username is too short!")
       .isLength({ max: 30 })
       .withMessage("Username is too long!")
-      .custom((value, { req }) => {
-        return User.findOne({ username: value }).then((userDoc) => {
-          if (userDoc) {
-            return Promise.reject("Username is already exists!");
-          }
-        });
+      .custom(async (value, { }) => {
+        const userDoc = await User.findOne({ username: value });
+        if (userDoc) {
+          return Promise.reject("Username is already exists!");
+        }
       }),
     body("password")
       .trim()
@@ -39,6 +38,19 @@ router.post(
       .withMessage("Passowrd is too short!"),
   ],
   authController.register
+);
+
+// POST /login
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Please enter an vaild email!"),
+    body("password")
+      .trim()
+      .isLength({ min: 4 })
+      .withMessage("Passowrd is too short!"),
+  ],
+  authController.login
 );
 
 module.exports = router;
