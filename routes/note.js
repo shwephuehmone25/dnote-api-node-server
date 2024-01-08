@@ -2,6 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 
 const router = express.Router();
+const authMiddleware = require("../middlewares/is-auth");
 
 /**import controllers*/
 const noteController = require("../controllers/note");
@@ -35,12 +36,12 @@ router.post(
 router.get("/notes/:id", noteController.getNoteDetails);
 
 //GET/edit/:id
-router.get("/edit/:id", noteController.getOldNote);
+router.get("/edit/:id", authMiddleware, noteController.getOldNote);
 
 //POST/edit
-router.put("/edit/:id", noteController.updateNote);
+router.put("/edit/:id", authMiddleware, noteController.updateNote);
 
 //DELETE/note/:id
-router.delete("/delete/note/:id", noteController.deleteNote);
+router.delete("/delete/note/:id", authMiddleware, noteController.deleteNote);
 
 module.exports = router;
