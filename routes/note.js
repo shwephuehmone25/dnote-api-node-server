@@ -36,9 +36,9 @@ router.post(
 router.get("/notes/:id", noteController.getNoteDetails);
 
 //GET/edit/:id
-router.get("/edit/:id", authMiddleware, noteController.getOldNote);
+router.get("/edit/:id", noteController.getOldNote);
 
-//POST/edit
+//PUT/edit
 router.put("/edit/:id", authMiddleware, noteController.updateNote);
 
 //DELETE/note/:id

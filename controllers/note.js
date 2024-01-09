@@ -46,10 +46,12 @@ exports.createNote = (req, res, next) => {
       errorMessage: errors.array(),
     });
   }
+  // console.log("req.userId:", req.userId);
   Note.create({
     title,
     content,
     image: image ? image.path : "",
+    author: req.userId,
   })
     .then((_) => {
       res.status(201).json({
