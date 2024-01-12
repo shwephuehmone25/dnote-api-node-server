@@ -91,6 +91,10 @@ exports.getOldNote = (req, res, next) => {
   const { id } = req.params;
   Note.findById(id)
     .then((note) => {
+      if (note.author.toString() !== req.userId) 
+      {
+        return res.status(401).json("Permission Denied!");
+      }
       return res.status(200).json(note);
     })
     .catch((err) => {
@@ -111,6 +115,11 @@ exports.updateNote = (req, res, next) => {
       if (!note) {
         //console.log("Note not found for ID:", id);
         return res.status(404).json({ message: "Note not found." });
+      }
+
+      if (note.author.toString() !== req.userId) 
+      {
+        return res.status(401).json("Permission Denied!");
       }
 
       note.title = req.body.title;
@@ -155,6 +164,11 @@ exports.deleteNote = async (req, res, next) => {
 
     await unlinkFile();
     await Note.findByIdAndDelete(id);
+
+    if (note.author.toString() !== req.userId)
+    {
+      return res.status(401).json("Permission Denied!");
+    }
 
     return res.status(204).json({
       message: "Note is deleted.",

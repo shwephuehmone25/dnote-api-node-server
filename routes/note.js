@@ -17,6 +17,7 @@ router.get("/notes", noteController.getAllNotes);
 //POST/note
 router.post(
   ["/create/note", "/notes"],
+  authMiddleware,
   [
     body("title")
       .trim()

@@ -65,7 +65,7 @@ exports.login = async (req, res, next) => {
       process.env.JWT_KEY,
       { expiresIn: "1h" }
     );
-    return res.status(200).json({ token, userId: userDoc._id });
+    return res.status(200).json({ token, userId: userDoc._id, user_mail: userDoc.email });
   } catch (err) {
     console.log(err);
     return res.status(400).json({ message: err.message });
